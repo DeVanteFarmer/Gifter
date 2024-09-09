@@ -22,11 +22,14 @@ namespace Gifter.Repositories
                 SELECT up.Id AS UserProfileId, up.Name AS UserName, up.Email,
                        up.ImageUrl AS UserProfileImageUrl, up.DateCreated AS UserProfileDateCreated,
                        p.Id AS PostId, p.Title AS PostTitle, p.Caption AS PostCaption, 
-                       p.ImageUrl AS PostImageUrl, p.DateCreated AS PostDateCreated
+                       p.ImageUrl AS PostImageUrl, p.DateCreated AS PostDateCreated,
+                       c.Id AS CommentId, c.Message AS CommentMessage, 
+                       c.UserProfileId AS CommentUserProfileId, c.PostId AS CommentPostId
                 FROM UserProfile up
                 LEFT JOIN Post p ON p.UserProfileId = up.Id
+                LEFT JOIN Comment c ON c.PostId = p.Id
                 WHERE up.Id = @UserProfileId
-                ORDER BY p.DateCreated";
+                ORDER BY p.DateCreated, c.Id";
 
                     DbUtils.AddParameter(cmd, "@UserProfileId", userProfileId);
 
@@ -50,18 +53,39 @@ namespace Gifter.Repositories
                             };
                         }
 
-                        // If a post exists, add it to the user's Post list
+                        // If a post exists, find or add it to the user's Post list
                         if (DbUtils.IsNotDbNull(reader, "PostId"))
                         {
-                            user.Posts.Add(new Post()
+                            var postId = DbUtils.GetInt(reader, "PostId");
+                            var post = user.Posts.FirstOrDefault(p => p.Id == postId);
+
+                            if (post == null)
                             {
-                                Id = DbUtils.GetInt(reader, "PostId"),
-                                Title = DbUtils.GetString(reader, "PostTitle"),
-                                Caption = DbUtils.GetString(reader, "PostCaption"),
-                                DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
-                                ImageUrl = DbUtils.GetNullableString(reader, "PostImageUrl"),
-                                UserProfileId = DbUtils.GetInt(reader, "UserProfileId")
-                            });
+                                // If post does not exist in the list, create it
+                                post = new Post()
+                                {
+                                    Id = postId,
+                                    Title = DbUtils.GetString(reader, "PostTitle"),
+                                    Caption = DbUtils.GetString(reader, "PostCaption"),
+                                    DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
+                                    ImageUrl = DbUtils.GetNullableString(reader, "PostImageUrl"),
+                                    UserProfileId = DbUtils.GetInt(reader, "UserProfileId"),
+                                    Comments = new List<Comment>() // Initialize empty Comments list
+                                };
+                                user.Posts.Add(post);
+                            }
+
+                            // If a comment exists, add it to the post's Comments list
+                            if (DbUtils.IsNotDbNull(reader, "CommentId"))
+                            {
+                                post.Comments.Add(new Comment()
+                                {
+                                    Id = DbUtils.GetInt(reader, "CommentId"),
+                                    Message = DbUtils.GetString(reader, "CommentMessage"),
+                                    UserProfileId = DbUtils.GetInt(reader, "CommentUserProfileId"),
+                                    PostId = DbUtils.GetInt(reader, "CommentPostId")
+                                });
+                            }
                         }
                     }
 
@@ -71,6 +95,7 @@ namespace Gifter.Repositories
                 }
             }
         }
+
 
 
         public void Add(UserProfile user)
