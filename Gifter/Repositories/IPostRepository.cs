@@ -6,9 +6,11 @@ namespace Gifter.Repositories
     {
         void Add(Post post);
         void Delete(int id);
+        void Update(Post post);
+        Post GetById(int id);
         List<Post> GetAll();
         List<Post> GetAllWithComments();
-        Post GetById(int id);
-        void Update(Post post);
+        List<Post> Search(string criterion, bool sortDescending);
+        List<Post> GetPostsSince(DateTime sinceDate); // New method for posts since a date
     }
 }
