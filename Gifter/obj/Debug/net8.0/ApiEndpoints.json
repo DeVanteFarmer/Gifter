@@ -90,6 +90,22 @@
   },
   {
     "ContainingType": "Gifter.Controllers.PostController",
+    "Method": "GetRecentPosts",
+    "RelativePath": "api/Post/recent",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "since",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Gifter.Controllers.PostController",
     "Method": "Search",
     "RelativePath": "api/Post/search",
     "HttpMethod": "GET",

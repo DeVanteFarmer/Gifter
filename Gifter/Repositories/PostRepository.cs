@@ -16,12 +16,12 @@ namespace Gifter.Repositories
         {
             return new Post()
             {
-                Id = DbUtils.GetInt(reader, "PostId"),
-                Title = DbUtils.GetString(reader, "Title"),
-                Caption = DbUtils.GetString(reader, "Caption"),
-                DateCreated = DbUtils.GetDateTime(reader, "PostDateCreated"),
-                ImageUrl = DbUtils.GetString(reader, "PostImageUrl"),
-                UserProfileId = DbUtils.GetInt(reader, "UserProfileId"),
+                Id = DbUtils.GetInt((Microsoft.Data.SqlClient.SqlDataReader)reader, "PostId"),
+                Title = DbUtils.GetString((Microsoft.Data.SqlClient.SqlDataReader)reader, "Title"),
+                Caption = DbUtils.GetString((Microsoft.Data.SqlClient.SqlDataReader)reader, "Caption"),
+                DateCreated = DbUtils.GetDateTime((Microsoft.Data.SqlClient.SqlDataReader)reader, "PostDateCreated"),
+                ImageUrl = DbUtils.GetString((Microsoft.Data.SqlClient.SqlDataReader)reader, "PostImageUrl"),
+                UserProfileId = DbUtils.GetInt((Microsoft.Data.SqlClient.SqlDataReader)reader, "UserProfileId"),
                 UserProfile = NewUserProfileFromReader(reader)
             };
         }
@@ -30,11 +30,11 @@ namespace Gifter.Repositories
         {
             return new UserProfile()
             {
-                Id = DbUtils.GetInt(reader, "UserProfileId"),
-                Name = DbUtils.GetString(reader, "Name"),
-                Email = DbUtils.GetString(reader, "Email"),
-                DateCreated = DbUtils.GetDateTime(reader, "UserProfileDateCreated"),
-                ImageUrl = DbUtils.GetNullableString(reader, "UserProfileImageUrl"),
+                Id = DbUtils.GetInt((Microsoft.Data.SqlClient.SqlDataReader)reader, "UserProfileId"),
+                Name = DbUtils.GetString((Microsoft.Data.SqlClient.SqlDataReader)reader, "Name"),
+                Email = DbUtils.GetString((Microsoft.Data.SqlClient.SqlDataReader)reader, "Email"),
+                DateCreated = DbUtils.GetDateTime((Microsoft.Data.SqlClient.SqlDataReader)reader, "UserProfileDateCreated"),
+                ImageUrl = DbUtils.GetNullableString((Microsoft.Data.SqlClient.SqlDataReader)reader, "UserProfileImageUrl"),
             };
         }
         public List<Post> GetAll()
